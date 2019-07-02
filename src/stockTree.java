@@ -3,15 +3,8 @@
  *
  * stockTree class, to contain stock from a specific date
  **/
-import java.nio.file.*;
-import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.*;
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.util.Calendar;
 
 
 public class stockTree {
