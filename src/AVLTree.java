@@ -153,7 +153,7 @@ class AVLTree {
             System.out.println("2018-11-30"+" is not valid.");
         }
 
-        MedDescriptor meds8 = new MedDescriptor(5, 7, date_);
+        MedDescriptor meds8 = new MedDescriptor(8, 7, date_);
         MedDescriptor meds7 = new MedDescriptor(7, 7, date_);
         MedDescriptor meds2 = new MedDescriptor(2, 7, date_);
         MedDescriptor meds13 = new MedDescriptor(13, 7, date_);

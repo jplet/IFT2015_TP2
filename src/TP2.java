@@ -21,8 +21,10 @@ public class TP2 {
         Function to read order for pharmacy; takes in the filename to read from as argument
          */
 
-        List<ArrayList<Double>> data = new ArrayList<>();
-
+        List<ArrayList<Object>> data = new ArrayList<>();
+        data.add(new ArrayList<Object>());
+        data.add(new ArrayList<Object>());
+        data.add(new ArrayList<Object>());
         System.out.println("Reading from file "+filename+"\n");
 
 
@@ -41,6 +43,12 @@ public class TP2 {
         }
         return "Hi";
     }
+    
+    public static void PrintStock() {
+    	
+    }
+    
+    public static void 
 
 
     public static void main(String[] args) {
@@ -48,7 +56,7 @@ public class TP2 {
 //        stock.add(5);
 //        System.out.println(stock.x);
 //        isValidDate("2004-11-30");
-//        ReadPharmacyOrder(args[0]);
+        ReadPharmacyOrder(args[0]);
     }
 
 }
