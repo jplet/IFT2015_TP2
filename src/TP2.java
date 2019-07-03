@@ -1,5 +1,5 @@
 /**
- * Jonathan Birmani-Burrows & JP Letendre
+ * Jonathan Bhimani-Burrows & JP Letendre
  *
  * TP2 class for pharmacy pill management
  **/
