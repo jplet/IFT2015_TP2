@@ -16,7 +16,7 @@ import java.util.Calendar;
 
 public class TP2 {
 	static SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd");  
-    public static String ReadPharmacyOrder(String filename) {
+    public static List ReadPharmacyOrder(String filename) {
         /*
         Function to read order for pharmacy; takes in the filename to read from as argument
          */
@@ -30,50 +30,60 @@ public class TP2 {
             Scanner scanner = new Scanner(filePath);
             
             while (scanner.hasNext()) {
-            	String line = scanner.next();
-                if(line.equals("APPROV")) {
-                	
-                	while(!scanner.next().equals(';')) {             	
-                	line = scanner.next();
-                	String line_med = line.split(" ")[0].replace("Medicament", "");
-                	System.out.println(line_med);
-                	line = scanner.next();
-                	String line_quantity = line;
-                	System.out.println(line_quantity);
-                	line = scanner.next();
-                	String line_exp = line;
-                	System.out.println(line_exp);
-                	MedDescriptor hi = new MedDescriptor(Integer.parseInt(line_med), Integer.parseInt(line_quantity), formatter1.parse(line_exp));
-                	data.add(hi);
-                	System.out.println(hi);
+            	String line = scanner.nextLine();
+                if(line.contains("APPROV :")) {
+                	data.add(line);
+            		line=scanner.nextLine();
+                	while(line.equals(";") == false) {
+                    	String[] pieces = line.split("\\s+");
+//                    	System.out.println(pieces[0]);
+//                    	System.out.println(pieces[1]);
+//                    	System.out.println(pieces[2]);
+                		line=scanner.nextLine();
+                	MedDescriptor placeHolder = new MedDescriptor(Integer.parseInt(pieces[0].replace("Medicament", "")), Integer.parseInt(pieces[1]), formatter1.parse(pieces[2]));
+                	data.add(placeHolder);
+                	System.out.println(placeHolder);
                 	}
                 	System.out.println("APPROV OK");
                 }
-                else if(line.equals("DATE")) {
-                	Date currentDate=new SimpleDateFormat("yyyy-MM-dd").parse(scanner.next());
-                	//cant add date or meddescriptor 
-                	//how do I dynamically assign names, or do I have to instantiate the classes at all?
+                else if(line.contains("DATE")) {
+                	Date currentDate=new SimpleDateFormat("yyyy-MM-dd").parse(line.replace("DATE ", ""));
                 	data.add(currentDate);
                 	System.out.println(currentDate + " OK");
                 }
-                else if(line.equals("STOCK")) {
+                else if(line.contains("STOCK")) {
+                	data.add("STOCK");
                 	System.out.println("Stock is");
                 }
-                else if(line.equals("PRESCRIPTION")) {
+                else if(line.contains("PRESCRIPTION")) {
+                	data.add(line);
+                	line=scanner.nextLine();
+                	while(line.equals(";") == false) {
+                    	String[] pieces = line.split("\\s+");
+//                    	System.out.println(pieces[0]);
+//                    	System.out.println(pieces[1]);
+//                    	System.out.println(pieces[2]);
+                    	int medAmount = Integer.parseInt(pieces[1]) * Integer.parseInt(pieces[2]);
+                		line=scanner.nextLine();
+                	PrescriptionRequest placeHolder = new PrescriptionRequest(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
+                	data.add(placeHolder);
+                	System.out.println(placeHolder);
+                	}
                 	System.out.println("PRE OK");
                 }
                 else {
                 	System.out.println("Unrecognized character");
                 }
-//                System.out.println(line);
+                
 
             }
             scanner.close();
+            System.out.println("Finished parsing file");
         }
         catch(IOException | NumberFormatException | ParseException e){
             e.printStackTrace();
         }
-        return "Hi";
+        return data;
     }
     
 //    public static void PrintStock() {
@@ -83,12 +93,18 @@ public class TP2 {
 
 
     public static void main(String[] args) {
+    	List<Object> parseData = new ArrayList<>(); 
 //    	ReadPharmacyOrder(args[0]);
     	
 //    	remove as necessary
-    	String file = new String("C:/Users/jonat/Documents/School/Data_Structures/A2/tests/exemple1.txt");
-    	ReadPharmacyOrder(file);
-//        stockTree stock = new stockTree();
+    	String file = new String("C:/Users/jonat/Documents/School/Data_Structures/A2/tests/exemple2.txt");
+    	parseData = ReadPharmacyOrder(file);
+    	
+        stockTree stock = new stockTree();
+        for (int i = 0; i < parseData.size(); i++) {
+        	System.out.println(parseData.get(i)); 
+        	}
+        
 //        stock.add(5);
 //        System.out.println(stock.x);
 //        isValidDate("2004-11-30");
