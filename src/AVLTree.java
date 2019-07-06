@@ -84,13 +84,14 @@ class AVLTree {
     }
 
     public AVLNode insert(AVLNode node, MedDescriptor meds) {
-
+    	System.out.println("Inside the AVLnode");
         /* 1.  Perform the normal BST insertion */
         if (node == null)
             return (new AVLNode(meds));
 
         if (meds.medicamentID < node.key)
             node.left = insert(node.left, meds);
+
         else if (meds.medicamentID > node.key)
             node.right = insert(node.right, meds);
         else // Duplicate keys not allowed

@@ -36,6 +36,7 @@ public class stockTree {
     }
 
     public void addMedicament(MedDescriptor meds){
+    	
         stock_tree.root = stock_tree.insert(stock_tree.root, meds);
     }
     
