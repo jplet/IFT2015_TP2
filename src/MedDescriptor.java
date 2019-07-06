@@ -11,4 +11,19 @@ public class MedDescriptor {
         medicamentAmount = medAmount;
         expirationDate = expDate;
     }
+    
+    public Date getExpirationDate() {
+    	return this.expirationDate;
+    }
+    public int getMedicamentID() {
+    	return this.medicamentID;
+    }
+    public int getMedicamentAmount() {
+    	return this.medicamentAmount;
+    }
+    
+    public void setMedicamentAmount(int amount) {
+    	this.medicamentAmount= amount;
+    	
+    }
 }

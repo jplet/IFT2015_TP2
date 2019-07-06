@@ -23,7 +23,8 @@ public class stockTree {
         }
         return true;
     }
-
+    
+    
     public void setDate(String date){
         if (isValidDate(date)){
             stock_date = date;
@@ -37,7 +38,9 @@ public class stockTree {
     public void addMedicament(MedDescriptor meds){
         stock_tree.root = stock_tree.insert(stock_tree.root, meds);
     }
+    
 
+    
     public static void main(String[] args) {
         System.out.println("Hello");
     }

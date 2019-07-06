@@ -32,7 +32,7 @@ public class TP2 {
             while (scanner.hasNext()) {
             	String line = scanner.nextLine();
                 if(line.contains("APPROV :")) {
-                	data.add(line);
+                	data.add("APPROV");
             		line=scanner.nextLine();
                 	while(line.equals(";") == false) {
                     	String[] pieces = line.split("\\s+");
@@ -48,6 +48,7 @@ public class TP2 {
                 }
                 else if(line.contains("DATE")) {
                 	Date currentDate=new SimpleDateFormat("yyyy-MM-dd").parse(line.replace("DATE ", ""));
+                	data.add("DATE");
                 	data.add(currentDate);
                 	System.out.println(currentDate + " OK");
                 }
@@ -56,7 +57,7 @@ public class TP2 {
                 	System.out.println("Stock is");
                 }
                 else if(line.contains("PRESCRIPTION")) {
-                	data.add(line);
+                	data.add("PRESCRIPTION");
                 	line=scanner.nextLine();
                 	while(line.equals(";") == false) {
                     	String[] pieces = line.split("\\s+");
@@ -101,8 +102,39 @@ public class TP2 {
     	parseData = ReadPharmacyOrder(file);
     	
         stockTree stock = new stockTree();
-        for (int i = 0; i < parseData.size(); i++) {
-        	System.out.println(parseData.get(i)); 
+        int count = 0;
+        while (count<parseData.size()) {
+        	System.out.println(parseData.get(count)); 
+        	if (parseData.get(count).equals("DATE")) {
+//        	count+=1;
+//        	count+=1;
+//        	doesnt work so far
+//        	static SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd");
+//        	Date currentDate=formatter1.parse(parseData.get(count));
+        	//set date to be parseData.get(count);
+        	}
+        	else if(parseData.get(count).equals("STOCK")) {
+        	// make it print the stock	
+        	
+        	}
+        	else if(parseData.get(count).equals("PRESCRIPTION")) {
+        	//add check prescriptions vs stock tree 
+        	//this will be long
+        	}
+        	else if(parseData.get(count).equals("APPROV")) {
+        		count+=1;
+        		
+        	//store nodes in tree
+//        		System.out.println("Hi im here"+parseData.get(count));
+//        	stock.addMedicament((MedDescriptor)parseData.get(count));
+        	System.out.println("Hi im here"+parseData.get(count).getMedicamentID());
+        	// dont forget if one exists with a different date they must be stored separately
+        	}
+        	else {
+        		System.out.println("Unrecognized data in file");
+        	}
+        	//end of loop here
+        	count+=1;
         	}
         
 //        stock.add(5);
