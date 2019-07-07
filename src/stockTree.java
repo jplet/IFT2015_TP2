@@ -25,6 +25,7 @@ public class stockTree {
     }
     
     
+    
     public void setDate(String date){
         if (isValidDate(date)){
             stock_date = date;

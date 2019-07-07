@@ -84,7 +84,7 @@ class AVLTree {
     }
 
     public AVLNode insert(AVLNode node, MedDescriptor meds) {
-    	System.out.println("Inside the AVLnode");
+    	
         /* 1.  Perform the normal BST insertion */
         if (node == null)
             return (new AVLNode(meds));
@@ -97,6 +97,7 @@ class AVLTree {
         else // Duplicate keys not allowed
             return node;
 
+        
         /* 2. Update height of this ancestor node */
         node.height = 1 + max(height(node.left),
                 height(node.right));
