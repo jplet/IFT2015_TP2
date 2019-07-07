@@ -30,6 +30,7 @@ public class TP2 {
         
         // start parsing here 
         System.out.println("Reading from file "+filename+"\n");
+        
         try {
             Path filePath = Paths.get(filename);
             Scanner scanner = new Scanner(filePath);
@@ -50,7 +51,6 @@ public class TP2 {
                 		
                    MedDescriptor placeHolder = new MedDescriptor(Integer.parseInt(pieces[1]), formatter1.parse(pieces[2]));
                 	medications.put(Integer.parseInt(pieces[0].replace("Medicament", "")),placeHolder);
-//                	System.out.println(placeHolder);
                 	
                 	}
                 	System.out.println("APPROV OK");
@@ -61,7 +61,13 @@ public class TP2 {
                 }
                 else if(line.contains("STOCK")) {
                 	//print the stock
-                	System.out.println("Stock is");
+                	//not sure how to resolve currentDate well
+//                	System.out.println("STOCK"+currentDate);
+                	System.out.println("STOCK");
+                	for(SortedMap.Entry<Integer, MedDescriptor> entry: medications.entrySet()){
+                		System.out.println(entry.getKey() +"  "+ entry.getValue().getMedicamentAmount() + "  " + entry.getValue().getExpirationDate());
+                	}
+
                 }
                 else if(line.contains("PRESCRIPTION")) {
                 	line=scanner.nextLine();
@@ -71,10 +77,15 @@ public class TP2 {
 //                    	System.out.println(pieces[1]);
 //                    	System.out.println(pieces[2]);
                     	int medAmount = Integer.parseInt(pieces[1]) * Integer.parseInt(pieces[2]);
+                    	//note we might not even need a 'prescription request'
+                    	//we can probably just compare the parsed value, piece, directly to what is in the tree
+                    	//and set the new amount if necessary
+                    	
+                    	
                 		line=scanner.nextLine();
-                	PrescriptionRequest placeHolder = new PrescriptionRequest(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
+//                	PrescriptionRequest placeHolder = new PrescriptionRequest(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
 
-                	System.out.println(placeHolder);
+//                	System.out.println(placeHolder);
                 	}
                 	System.out.println("PRE OK");
                 }
