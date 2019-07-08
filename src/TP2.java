@@ -24,9 +24,7 @@ public class TP2 {
     	String filename = new String("C:/Users/jonat/Documents/School/Data_Structures/A2/tests/exemple2.txt");
     	SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd");  
     	SortedMap<Integer, MedDescriptor> medications = new TreeMap<>();
-    	
-        stockTree stock = new stockTree();
-        int count = 0;
+    	int prescriptionCount = 0;
         
         // start parsing here 
         System.out.println("Reading from file "+filename+"\n");
@@ -36,6 +34,7 @@ public class TP2 {
             Scanner scanner = new Scanner(filePath);
             
             while (scanner.hasNext()) {
+            	
             	String line = scanner.nextLine();
                 if(line.contains("APPROV :")) {
             		line=scanner.nextLine();
@@ -70,22 +69,51 @@ public class TP2 {
 
                 }
                 else if(line.contains("PRESCRIPTION")) {
+                	prescriptionCount+=1;
+                	System.out.println("PRESCRIPTION  " + prescriptionCount);
                 	line=scanner.nextLine();
+                	//there is here as a temp only //
+                	String dummy = "2013-08-27";
+                	Date currentDate=new SimpleDateFormat("yyyy-MM-dd").parse(dummy.replace("DATE ", ""));
+                	//remove what is above
                 	while(line.equals(";") == false) {
-                    	String[] pieces = line.split("\\s+");
-//                    	System.out.println(pieces[0]);
-//                    	System.out.println(pieces[1]);
-//                    	System.out.println(pieces[2]);
+                    	String[] pieces = line.split("\\s+");         
                     	int medAmount = Integer.parseInt(pieces[1]) * Integer.parseInt(pieces[2]);
-                    	//note we might not even need a 'prescription request'
-                    	//we can probably just compare the parsed value, piece, directly to what is in the tree
-                    	//and set the new amount if necessary
-                    	
+                    	int ID = Integer.parseInt(pieces[0].replace("Medicament", ""));
+                
+                    	if(!medications.containsKey(ID)){
+                    		System.out.println(line +"   COMMANDE");
+                    		//leave this for reference if necessary
+//                    		System.out.println(medications.get(Integer.parseInt(pieces[0])) + " "+ Integer.parseInt(pieces[1]) + " "+ Integer.parseInt(pieces[2]) + "COMMANDE");
+                    	}
+                		
+
+                    	else if(medications.containsKey(ID) && currentDate.compareTo(medications.get(ID).getExpirationDate())<0){
+                    		//check if enough 
+                    		if(medAmount < medications.get(ID).getMedicamentAmount()) {
+                    			//set new amount of meds
+                    			int currentAmount = medications.get(ID).getMedicamentAmount();
+                    			int newAmount = currentAmount - medAmount;
+                    			medications.get(ID).setMedicamentAmount(newAmount);
+                    			System.out.println(line +"   OK ");
+                    		}
+                    		else if(medAmount > medications.get(ID).getMedicamentAmount()) {
+                    			System.out.println(line + "   COMMANDE");
+                    			medications.remove(ID);
+                    		}
+                    		else {
+                    			System.out.println("Another Error Occurred ");
+                    		}
+                    	}
+                    	else if(medications.containsKey(ID) && currentDate.compareTo(medications.get(ID).getExpirationDate())>0){
+                    		//order more
+                    		System.out.println(line + "   COMMANDE");
+                    		//remove node
+                    		medications.remove(ID);
+                    	}
                     	
                 		line=scanner.nextLine();
-//                	PrescriptionRequest placeHolder = new PrescriptionRequest(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
 
-//                	System.out.println(placeHolder);
                 	}
                 	System.out.println("PRE OK");
                 }
