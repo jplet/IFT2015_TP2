@@ -21,7 +21,7 @@ public class TP2 {
 //    	ReadPharmacyOrder(args[0]);
 
 //    	remove as necessary
-    	String filename = new String("D:/JP/Documents/Maitrise/Stage_2019/IFT2015 Data Structure/IFT2015/tests/exemple2.txt");
+    	String filename = new String("D:/JP/Documents/Maitrise/Stage_2019/IFT2015 Data Structure/IFT2015/tests/exemple3.txt");
     	SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd");  
     	SortedMap<Integer, MedDescriptor> medications = new TreeMap<>();
     	int prescriptionCount = 0;
@@ -37,22 +37,20 @@ public class TP2 {
             while (scanner.hasNext()) {
             	
             	String line = scanner.nextLine();
+
+            	// APPROVISIONNEMENT command
                 if(line.contains("APPROV :")) {
             		line=scanner.nextLine();
                 	while(line.equals(";") == false) {
                     	String[] pieces = line.split("\\s+");
-//                    	System.out.println(pieces[0]);
-//                    	System.out.println(pieces[1]);
-//                    	System.out.println(pieces[2]);
                 		line=scanner.nextLine();
-//                	leaving this here for reference only
-//                	MedDescriptor placeHolder = new MedDescriptor(Integer.parseInt(pieces[0].replace("Medicament", "")), Integer.parseInt(pieces[1]), formatter1.parse(pieces[2]));
-//                	stock.addMedicament(placeHolder);
 
-                    // TODO: Add to ID's medTree if ID already there
+                    // We have already have the medicamentID
                     if (medications.containsKey(Integer.parseInt(pieces[0].replace("Medicament", "")))) {
                         medications.get(Integer.parseInt(pieces[0].replace("Medicament", ""))).AddMedicament(Integer.parseInt(pieces[1]), formatter1.parse(pieces[2]));
                     }
+
+                    // We don't have the medicamentID
                     else {
                         MedDescriptor placeHolder = new MedDescriptor();
                         placeHolder.AddMedicament(Integer.parseInt(pieces[1]), formatter1.parse(pieces[2]));
@@ -61,12 +59,15 @@ public class TP2 {
                 	}
                 	System.out.println("APPROV OK");
                 }
+
+                // DATE command
                 else if(line.contains("DATE")) {
                 	currentDate=new SimpleDateFormat("yyyy-MM-dd").parse(line.replace("DATE ", ""));
                 	if (commands.isEmpty()) {
                         System.out.println(formatter1.format(currentDate) + " OK");
                     }
                 	else if (!commands.isEmpty()) {
+                	    // TODO: Remove expired content
                         System.out.println(formatter1.format(currentDate) + " COMMANDES :");
                         for(SortedMap.Entry<Integer, Integer> entry: commands.entrySet()){
                             System.out.println("Medicament"+entry.getKey() +"  "+ entry.getValue());
@@ -74,10 +75,9 @@ public class TP2 {
                         commands.clear();
                     }
                 }
+
+                // STOCK command
                 else if(line.contains("STOCK")) {
-                	//print the stock
-                	//not sure how to resolve currentDate well
-//                	System.out.println("STOCK"+currentDate);
                 	System.out.println("STOCK " + formatter1.format(currentDate));
                 	for(SortedMap.Entry<Integer, MedDescriptor> entry: medications.entrySet()) {
                         for (SortedMap.Entry<Date, Integer> entry2 : entry.getValue().medTree.entrySet()) {
@@ -85,22 +85,25 @@ public class TP2 {
                         }
                     }
                 }
+
+                // PRESCRIPTION command
                 else if(line.contains("PRESCRIPTION")) {
+
                 	prescriptionCount+=1;
                 	System.out.println("PRESCRIPTION  " + prescriptionCount);
                 	line=scanner.nextLine();
-                	//there is here as a temp only //
-//                	String dummy = "2013-08-27";
-//                	Date currentDate=new SimpleDateFormat("yyyy-MM-dd").parse(dummy.replace("DATE ", ""));
-                	//remove what is above
+
+                	// While we're in the PRESCRIPTION section, with delimiter ';'
                 	while(!line.equals(";")) {
                     	String[] pieces = line.split("\\s+");
                     	int medAmount = Integer.parseInt(pieces[1]) * Integer.parseInt(pieces[2]);
                     	int ID = Integer.parseInt(pieces[0].replace("Medicament", ""));
 
-                    	// CHECK IF ID IS AVAILABLE IN STOCK
+                    	// We check if ID is available in stock, if not we order it
                     	if(!medications.containsKey(ID)){
                     		System.out.println(line +"   COMMANDE");
+
+                    		// If medicament already ordered, just add to the current value
                     		if (commands.containsKey(Integer.parseInt(pieces[0].replace("Medicament", "")))) {
                     		    Integer prevCommand = commands.get(Integer.parseInt(pieces[0].replace("Medicament", "")));
                     		    Integer newCommand = prevCommand + medAmount;
@@ -108,22 +111,21 @@ public class TP2 {
                                 line=scanner.nextLine();
                                 continue;
                             }
+
+                    		// If medicament not in the order, instantiate the node in the tree
                     		else {
                                 commands.put(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
                                 line=scanner.nextLine();
                                 continue;
                             }
-                    		// If Med is not available
-                    		//leave this for reference if necessary
-//                    		System.out.println(medications.get(Integer.parseInt(pieces[0])) + " "+ Integer.parseInt(pieces[1]) + " "+ Integer.parseInt(pieces[2]) + "COMMANDE");
                     	}
-                    	// CHECK IF AVAILABLE STOCK IS NOT EXPIRED OR WONT BE EXPIRED
-                        // first "else if" checks if there's any ceiling key over our currentDate
+
+                    	// We check if any of the expirationDates for a certain ID is even over our currentDate
+                        // If not (ceilingKey returns null), we command the medicament
                     	else if(medications.containsKey(ID) && medications.get(ID).medTree.ceilingKey(currentDate) == null){
-                            //order more
-                            System.out.println(line + "   COMMANDE");
-                            //remove node
-                            medications.remove(ID);
+                    	    System.out.println(line + "   COMMANDE");
+
+                    	    // if medicament already ordered
                             if (commands.containsKey(Integer.parseInt(pieces[0].replace("Medicament", "")))) {
                                 Integer prevCommand = commands.get(Integer.parseInt(pieces[0].replace("Medicament", "")));
                                 Integer newCommand = prevCommand + medAmount;
@@ -131,77 +133,90 @@ public class TP2 {
                                 line=scanner.nextLine();
                                 continue;
                             }
+
+                            // if medicament not ordered
                             else {
                                 commands.put(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
                                 line=scanner.nextLine();
                                 continue;
                             }
                         }
-                    	// because of the previous else if, we know for sure there's at least one key
-                        Integer size = medications.get(ID).medTree.size();
-                    	boolean prescriptDone = false;
-                        for (Date entry : medications.get(ID).medTree.keySet()){
-                            // technically this condition is verified in previous else if
-//                            if(medications.containsKey(ID) && currentDate.compareTo(entry.getKey())<0){
-                            // check if end-of-treatment pills are still good
+                    	// If we get here, we know we have the medicamentID AND expirationDates over our currentDate
+                        // We know check gradually (with for loop) if our expDate - medAmount pairs are sufficient for
+                        // the prescription
+                        else {
+                            Integer size = medications.get(ID).medTree.size();
 
-                            // size is a safety variable to avoid getting NullPointerException when going through our pointers list
-                            size -= 1;
-                            Calendar endOfTreatmentCal = Calendar.getInstance();
-                            endOfTreatmentCal.setTime(currentDate);
-                            endOfTreatmentCal.add(Calendar.DAY_OF_MONTH, medAmount);
-                            // Date after adding the days to the given date
-                            Date endOfTreatmentDate = endOfTreatmentCal.getTime();
-                            Date expirationDate = entry;
-                            // Check if current expirationDate is smaller than endOfTreatmentDate
-                            if(endOfTreatmentDate.compareTo(expirationDate)>0) {}
-                            else if(endOfTreatmentDate.compareTo(expirationDate)<0){
-                                // check if enough
-                                // GOLDEN CONDITION :: if we reach it we're done searching through expiration dates
-                                if(medAmount < medications.get(ID).medTree.get(entry)) {
-                                    // set new amount of meds
-                                    int currentAmount = medications.get(ID).medTree.get(entry);
-                                    int newAmount = currentAmount - medAmount;
-                                    medications.get(ID).medTree.put(entry, newAmount);
-                                    System.out.println(line +"   OK ");
-                                    prescriptDone = true;
+                            // We loop through all our expirationDates available
+                            for (Date entry : medications.get(ID).medTree.keySet()){
+                                size -= 1;
+                                Calendar endOfTreatmentCal = Calendar.getInstance();
+                                endOfTreatmentCal.setTime(currentDate);
+                                endOfTreatmentCal.add(Calendar.DAY_OF_MONTH, medAmount);
+                                // Date after adding the days to the given date
+                                Date endOfTreatmentDate = endOfTreatmentCal.getTime();
+                                Date expirationDate = entry;
+                                // Check if current expirationDate is smaller than endOfTreatmentDate
+                                if(endOfTreatmentDate.compareTo(expirationDate)>0) {}
+                                else if(endOfTreatmentDate.compareTo(expirationDate)<0){
+                                    // check if enough
+                                    // GOLDEN CONDITION :: if we reach it we're done searching through expiration dates
+                                    if(medAmount < medications.get(ID).medTree.get(entry)) {
+                                        // set new amount of meds
+                                        int currentAmount = medications.get(ID).medTree.get(entry);
+                                        int newAmount = currentAmount - medAmount;
+                                        medications.get(ID).medTree.put(entry, newAmount);
+                                        System.out.println(line +"   OK ");
+                                        System.out.println("GREEN1");
+                                        break;
+                                    }
+                                    else if(medAmount > medications.get(ID).medTree.get(entry)) {
+
+                                        //
+                                        if (size == 0){
+                                            System.out.println(line + "   COMMANDE");
+                                            System.out.println("GREEN2");
+                                            // We'll check that later
+                                            // medications.remove(ID);
+                                            if (commands.containsKey(Integer.parseInt(pieces[0].replace("Medicament", "")))) {
+                                                Integer prevCommand = commands.get(Integer.parseInt(pieces[0].replace("Medicament", "")));
+                                                Integer newCommand = prevCommand + medAmount;
+                                                commands.put(Integer.parseInt(pieces[0].replace("Medicament", "")), newCommand);
+                                                break;
+                                            }
+                                            else {
+                                                commands.put(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
+                                                break;
+                                            }
+                                        }
+                                        else {
+
+                                        }
+                                    }
+                                    else {
+                                        System.out.println("Another Error Occurred ");
+                                    }
                                 }
-                                else if(medAmount > medications.get(ID).medTree.get(entry)) {
+
+                                if (size == 0){ // & !prescriptDone){
                                     System.out.println(line + "   COMMANDE");
-                                    // We'll check that later
-                                    // medications.remove(ID);
-                                    if (commands.containsKey(Integer.parseInt(pieces[0].replace("Medicament", ""))) & size == 0) {
+                                    System.out.println("GREEN-FINAL");
+                                    if (commands.containsKey(Integer.parseInt(pieces[0].replace("Medicament", "")))) {
                                         Integer prevCommand = commands.get(Integer.parseInt(pieces[0].replace("Medicament", "")));
                                         Integer newCommand = prevCommand + medAmount;
                                         commands.put(Integer.parseInt(pieces[0].replace("Medicament", "")), newCommand);
-//                                        if (size == 0 & )
                                     }
                                     else {
                                         commands.put(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
                                     }
+                                    break;
                                 }
-                                else {
-                                    System.out.println("Another Error Occurred ");
+
+                                else { //if (prescriptDone){
                                 }
                             }
-
-                            if (size == 0 & !prescriptDone){
-                                System.out.println(line + "   COMMANDE");
-                                if (commands.containsKey(Integer.parseInt(pieces[0].replace("Medicament", "")))) {
-                                    Integer prevCommand = commands.get(Integer.parseInt(pieces[0].replace("Medicament", "")));
-                                    Integer newCommand = prevCommand + medAmount;
-                                    commands.put(Integer.parseInt(pieces[0].replace("Medicament", "")), newCommand);
-                                }
-                                else {
-                                    commands.put(Integer.parseInt(pieces[0].replace("Medicament", "")), medAmount);
-                                }
-                                break;
-                            } else if (prescriptDone){
-                                break;
-                            }
-
-//                            }
                         }
+
 
 //                    	else if(medications.containsKey(ID) && currentDate.compareTo(medications.get(ID).getExpirationDate())>0){
 //                    		//order more
