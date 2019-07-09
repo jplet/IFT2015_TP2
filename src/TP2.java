@@ -65,7 +65,6 @@ public class TP2 {
                         System.out.println(formatter1.format(currentDate) + " OK");
                     }
                 	else if (!commands.isEmpty()) {
-                	    // TODO: Remove expired content
                         System.out.println(formatter1.format(currentDate) + " COMMANDES :");
                         for(SortedMap.Entry<Integer, Integer> entry: commands.entrySet()){
                             System.out.println("Medicament"+entry.getKey() +"  "+ entry.getValue());
