@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.Set;
 
 public class TP3 {
 
@@ -56,8 +57,10 @@ public class TP3 {
         String filename = args[0];
 
         Carte cityMap = parseInput(filename);
-        System.out.println("Parsing over.");
-
+        Set<Street> test = cityMap.primJarnik();
+        for(Street street: test){
+            System.out.println(street.name + street.getBounds().get(0) + street.getBounds().get(1) + street.getCost());
+        }
 
     }
 

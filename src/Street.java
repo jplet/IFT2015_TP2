@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Street {
+public class Street implements Comparable<Street>{
 
     public String start;
     public String end;
@@ -35,4 +35,21 @@ public class Street {
     public Integer getCost(){
         return this.cost;
     }
+
+    @Override
+    public int compareTo(Street o) {
+        String selfStart = this.getBounds().get(0);
+        String otherStart = o.getBounds().get(0);
+
+        String selfEnd = this.getBounds().get(1);
+        String otherEnd = o.getBounds().get(1);
+
+        if(selfStart.compareTo(otherStart) == 0){
+            return selfEnd.compareTo(otherEnd);
+        }
+        else{
+            return selfStart.compareTo(otherStart);
+        }
+    }
 }
+
