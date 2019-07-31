@@ -51,22 +51,13 @@ public class Carte {
         while(!citySites.keySet().equals(visited)){
             List<Street> incidentVertices = new ArrayList<>();
             for(String node : visited) {
-                incidentVertices.addAll(citySites.get(node).getIncidentStreets());
-                List<Street> uneligibleVertices = new ArrayList<>();
-
-                // Check if incidentVertices extremities already visited
-                for (Street street : incidentVertices) {
-                    for (String visited_ : visited) {
-                        if (street.getBounds().get(1).equals(visited_)) {
-                            uneligibleVertices.add(street);
-                        }
+                for(Street street : citySites.get(node).getIncidentStreets()){
+                    if (visited.contains(street.getBounds().get(1))) {;}
+                    else {
+                        incidentVertices.add(street);
                     }
                 }
 
-                // Remove already visited extremities
-                for (Street street : uneligibleVertices) {
-                    incidentVertices.remove(street);
-                }
             }
 
             Street bestStreet = minimumCost(incidentVertices);
